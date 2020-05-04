@@ -1,5 +1,6 @@
 import java.net.URISyntaxException;
 
+import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -20,9 +21,11 @@ public class Character extends Pane{
 	private double yVelocity;
 	private double gamePaneHeight;
 	private double gamePaneWidth;
+	private Pane gamePane;
 	private Circle hitCircle;
 
 	public Character(Pane gamePane) {
+		this.gamePane = gamePane;
 		lives = 3;
 		xVelocity=0;
 		yVelocity=0;
@@ -40,13 +43,26 @@ public class Character extends Pane{
 		x = (gamePaneWidth - spriteImageView.getImage().getWidth()) / 2.0;
         y = gamePaneHeight * 0.8;
         
-        hitCircle = new Circle(5, Color.CHARTREUSE);
+        hitCircle = new Circle(3, Color.CHARTREUSE);
         this.getChildren().add(hitCircle);
+        refreshLocation();
 	}
 	
 	public void update() {
 		x+=xVelocity;
 		y+=yVelocity;
+		if(x<0) {
+			x=0;
+		}
+		else if(x>gamePaneWidth-spriteImageView.getImage().getWidth()) {
+			x=gamePaneWidth-spriteImageView.getImage().getWidth();
+		}
+		if(y<0) {
+			y=0;
+		}
+		else if(y>gamePaneHeight-spriteImageView.getImage().getHeight()) {
+			y=gamePaneHeight-spriteImageView.getImage().getHeight();
+		}
 		refreshLocation();
 	}
 	
@@ -63,13 +79,11 @@ public class Character extends Pane{
 	}
 	
 	public void moveLeft() {
-		//TODO: Check bounds on game area
 		xVelocity = -SPEED;
 		setLeftImage();
 	}
 	
 	public void moveRight() {
-		//TODO: Check bounds on game area
 		xVelocity = SPEED;
 		setRightImage();
 	}
@@ -101,9 +115,17 @@ public class Character extends Pane{
 	
 	public void loseLife() {
 		lives--;
+		x = (gamePaneWidth - spriteImageView.getImage().getWidth()) / 2.0;
+        y = gamePaneHeight * 0.8;
+        refreshLocation();
+		
 	}
 	
 	public boolean isDead() {
 		return lives<=0;
+	}
+	
+	public Bounds getHitBoxBounds() {
+		return gamePane.sceneToLocal(this.localToScene(hitCircle.getBoundsInLocal()));
 	}
 }
