@@ -8,17 +8,15 @@ public class BulletSpawner{
 	private double gamePaneHeight;
 	private double gamePaneWidth;
 	private Pane gamePane;
-	private LinkedList<Bullet> spawnedBullets;
 	
 	public BulletSpawner(Pane gamePane) {
 		this.gamePane = gamePane;
 		gamePaneHeight = gamePane.getPrefHeight();
 		gamePaneWidth = gamePane.getPrefWidth();
-		spawnedBullets = new LinkedList<Bullet>();
 	}
 	
 	public LinkedList<Bullet> spawnRandomBullets(){
-		spawnedBullets.clear();
+		LinkedList<Bullet> spawnedBullets = new LinkedList<Bullet>();
 		Random random = new Random();
 		int numBullets = random.nextInt(25)+10;
 		for(int i=0 ; i<numBullets; i++) {
