@@ -23,6 +23,7 @@ public class Character extends Pane{
 	private double gamePaneWidth;
 	private Pane gamePane;
 	private Circle hitCircle;
+	private boolean invincible;
 
 	public Character(Pane gamePane) {
 		this.gamePane = gamePane;
@@ -46,6 +47,7 @@ public class Character extends Pane{
         hitCircle = new Circle(3, Color.CHARTREUSE);
         this.getChildren().add(hitCircle);
         refreshLocation();
+        invincible = false;
 	}
 	
 	public void update() {
@@ -121,11 +123,24 @@ public class Character extends Pane{
 		
 	}
 	
+	
 	public boolean isDead() {
 		return lives<=0;
 	}
 	
 	public Bounds getHitBoxBounds() {
 		return gamePane.sceneToLocal(this.localToScene(hitCircle.getBoundsInLocal()));
+	}
+	
+	public boolean isInvincible() {
+		return invincible;
+	}
+	
+	public void addInvincibility() {
+		invincible = true;
+	}
+	
+	public void removeInvincibility() {
+		invincible = false;
 	}
 }

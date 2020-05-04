@@ -21,14 +21,14 @@ public class Bullet extends Pane {
 	private double gamePaneHeight;
 	private Pane gamePane;
 	
-	public Bullet(Pane gameField, double xTrajectory, double yTrajectory) {
+	public Bullet(Pane gameField, double startX, double startY, double xTrajectory, double yTrajectory) {
 		gamePane = gameField;
 		randomGenerateSprite();
 		hitCircle = new Circle(4, Color.TRANSPARENT);
 		this.getChildren().add(hitCircle);
 		
-		x = 50.0;
-		y = 50.0;
+		x = startX;
+		y = startY;
 		xVelocity = xTrajectory;
 		yVelocity = yTrajectory;
 		refreshLocation();
@@ -41,7 +41,11 @@ public class Bullet extends Pane {
 	public void update() {
 		x += xVelocity;
 		y += yVelocity;
-		if(x>gamePaneWidth-hitCircle.getRadius()) {
+		if(x<0) {
+			outOfBounds = true;
+			this.getChildren().remove(bulletImageView);
+		}
+		else if(x>gamePaneWidth-hitCircle.getRadius()) {
 			outOfBounds = true;
 			this.getChildren().remove(bulletImageView);
 		}
@@ -49,7 +53,9 @@ public class Bullet extends Pane {
 			outOfBounds = true;
 			this.getChildren().remove(bulletImageView);
 		}
-		refreshLocation();
+		else {
+			refreshLocation();	
+		}
 	}
 	
 	public void randomGenerateSprite() {
@@ -90,11 +96,19 @@ public class Bullet extends Pane {
 	
 	public void refreshLocation() {
 		this.relocate(x, y);
-        hitCircle.setCenterX(bulletImageView.getImage().getWidth()/2);
-        hitCircle.setCenterY(bulletImageView.getImage().getHeight()/2);
+		try {
+	        hitCircle.setCenterX(bulletImageView.getImage().getWidth()/2);
+	        hitCircle.setCenterY(bulletImageView.getImage().getHeight()/2);
+		} catch (Exception e) {
+		}
+
 	}
 	
 	public Bounds getHitBoxBounds() {
 		return gamePane.sceneToLocal(this.localToScene(hitCircle.getBoundsInLocal()));
+	}
+	
+	public boolean isOutOfBounds() {
+		return outOfBounds;
 	}
 }
