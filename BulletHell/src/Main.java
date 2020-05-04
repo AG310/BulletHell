@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -128,6 +127,7 @@ public class Main extends Application{
 			
 			startTitle.addEventHandler(MouseEvent.MOUSE_CLICKED, 
 					ev->{
+						audioPlayer.playSelect();
 						startTitle.setVisible(false);
 						endingTitleTransition();
 						new Thread(new Runnable() {
@@ -293,6 +293,7 @@ public class Main extends Application{
 						 * and stop iterating over bullets
 						 */
 						if(bullet.getHitBoxBounds().intersects(player.getHitBoxBounds()) && !player.isInvincible()) {
+							audioPlayer.playDeath();
 							player.addInvincibility();
 							player.loseLife();
 							removeAllBullets();
