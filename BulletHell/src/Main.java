@@ -36,11 +36,13 @@ public class Main extends Application{
 	LinkedList<Bullet> bulletList;
 	private Scene scene;
 	private AnimationTimer gameLoop;
+	private DatabaseDriver databaseDriver;
 	private BulletSpawner bulletSpawner;
 	private ImageView hellTitle; 
 	private ImageView girlTitle;
 	private ImageView startTitle;
 	private ImageView gameOverTitle;
+	private ImageView topScoresTitle;
 	private AudioPlayer audioPlayer;
 	private Text scoreText;
 	private int score;
@@ -70,6 +72,8 @@ public class Main extends Application{
 				
 				gameOverTransition();
 				audioPlayer.playGameOver();
+				databaseDriver.addScore(score);
+				databaseDriver.printScores();
 			}
 		}).start();
 		
@@ -121,6 +125,9 @@ public class Main extends Application{
 		
 		//Initialize game over boolean
 		gameOver = false;
+		
+		//Initialize database driver 
+		databaseDriver = new DatabaseDriver();
 	}
 	
 	public void createScoreHBox() {
@@ -171,7 +178,9 @@ public class Main extends Application{
 			girlTitle = new ImageView(new Image(getClass().getResource("images/girlTitle.png").toURI().toString()));
 			startTitle = new ImageView(new Image(getClass().getResource("images/startGlow.png").toURI().toString())); 
 			gameOverTitle = new ImageView(new Image(getClass().getResource("images/gameOver.png").toURI().toString()));
-			mainPane.getChildren().addAll(hellTitle, girlTitle, startTitle, gameOverTitle);
+			topScoresTitle = new ImageView(new Image(getClass().getResource("images/topScores.png").toURI().toString()));
+			topScoresTitle.setOpacity(0);
+			mainPane.getChildren().addAll(hellTitle, girlTitle, startTitle, gameOverTitle, topScoresTitle);
 			AnchorPane.setTopAnchor(hellTitle, 90.0);
 			AnchorPane.setLeftAnchor(hellTitle, -950.0);
 			AnchorPane.setTopAnchor(girlTitle, 180.0);
@@ -180,6 +189,10 @@ public class Main extends Application{
 			AnchorPane.setLeftAnchor(startTitle, 110.0);
 			AnchorPane.setTopAnchor(gameOverTitle, -50.0);
 			AnchorPane.setLeftAnchor(gameOverTitle, 70.0);
+			AnchorPane.setTopAnchor(topScoresTitle, 220.0);
+			AnchorPane.setLeftAnchor(topScoresTitle, 112.0);
+			
+
 			
 			startTitle.setOnMouseEntered(ev ->
 			{
@@ -285,8 +298,18 @@ public class Main extends Application{
 		TranslateTransition gameOverTransition2 = new TranslateTransition(Duration.seconds(0.4), gameOverTitle);
 		gameOverTransition2.setByY(20);
 		
+		FadeTransition topScoreTransition0 = new FadeTransition(Duration.seconds(0.7), topScoresTitle);
+		topScoreTransition0.setByValue(1);
+		
+		FadeTransition topScoreTransition1 = new FadeTransition(Duration.seconds(0.5), topScoresTitle);
+		topScoreTransition1.setByValue(1);
+		topScoreTransition1.setCycleCount(2);
+		topScoreTransition1.setAutoReverse(true);
+		topScoreTransition1.setToValue(0);
+		
 		SequentialTransition gameOverSequenTransition = new SequentialTransition();
-		gameOverSequenTransition.getChildren().addAll(gameOverTransition0,gameOverTransition1, gameOverTransition2);
+		gameOverSequenTransition.getChildren().addAll(gameOverTransition0,gameOverTransition1, gameOverTransition2,
+				topScoreTransition0, topScoreTransition1);
 		gameOverSequenTransition.play();
 	}
 	
