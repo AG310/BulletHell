@@ -68,8 +68,8 @@ public class Main extends Application{
 					e.printStackTrace();
 				}}
 				
-				audioPlayer.playGameOver();
 				gameOverTransition();
+				audioPlayer.playGameOver();
 			}
 		}).start();
 		
@@ -278,7 +278,7 @@ public class Main extends Application{
 	}
 	
 	public void gameOverTransition() {
-		TranslateTransition gameOverTransition0 = new TranslateTransition(Duration.seconds(0.7), gameOverTitle);
+		TranslateTransition gameOverTransition0 = new TranslateTransition(Duration.seconds(0.9), gameOverTitle);
 		gameOverTransition0.setByY(220);
 		TranslateTransition gameOverTransition1 = new TranslateTransition(Duration.seconds(0.2), gameOverTitle);
 		gameOverTransition1.setByY(-20);

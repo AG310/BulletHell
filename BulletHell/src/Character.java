@@ -111,7 +111,7 @@ public class Character extends Pane{
 
 	public void refreshLocation() {
 		this.relocate(x, y);
-        hitCircle.setCenterX(spriteImageView.getImage().getWidth()/2);
+        hitCircle.setCenterX((spriteImageView.getImage().getWidth()/2)-2);
         hitCircle.setCenterY(spriteImageView.getImage().getHeight()/2);
 	}
 	
