@@ -34,6 +34,7 @@ public class AudioPlayer {
 	
 	public void playMusic() {
 		gameMusic.setCycleCount(AudioClip.INDEFINITE);
+		gameMusic.setRate(1);
 		gameMusic.play();
 	}
 	
@@ -49,5 +50,11 @@ public class AudioPlayer {
 	
 	public void playSelect() {
 		select.play();
+	}
+	
+	public void playGameOver() {
+		gameMusic.setCycleCount(1);
+		gameMusic.setRate(0.5);
+		gameMusic.play();
 	}
 }

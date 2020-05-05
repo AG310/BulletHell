@@ -123,7 +123,9 @@ public class Character extends Pane{
 		
 	}
 	
-	
+	public int getLives() {
+		return lives;
+	}
 	public boolean isDead() {
 		return lives<=0;
 	}

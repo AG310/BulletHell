@@ -8,6 +8,7 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
@@ -16,7 +17,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -36,26 +41,36 @@ public class Main extends Application{
 	private ImageView girlTitle;
 	private ImageView startTitle;
 	private AudioPlayer audioPlayer;
+	private Text scoreText;
+	private int score;
+	private ImageView[] livesImageList;
+	private boolean gameOver;
 	
 	@Override
 	public void start(Stage stage){
 		initialize(stage);
 		createGameInputs();
 		createGameLoop();
+		createScoreHBox();
+		createLivesHBox();
 		createTitles();
 		startingTitleTransition();	
 		audioPlayer.playWind();
 		//Create Thread to monitor if player is still alive to continue
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				//TODO put label score keeping in loop
-//				while(!player.isDead()) {System.out.println();}
-//				//Stop game loop when player dies
-//				gameLoop.stop();
-//			}
-//		}).start();
-		removeAllBullets();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				//TODO put label score keeping in loop
+				while(!gameOver) {try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}}
+				
+				audioPlayer.playGameOver();
+			}
+		}).start();
+		
 	}
 	 
 	/*
@@ -98,6 +113,52 @@ public class Main extends Application{
 		
 		//Create Audio Player for game sounds
 		audioPlayer = new AudioPlayer();
+		
+		//Initialize score to zero
+		score = 0;
+		
+		//Initialize game over boolean
+		gameOver = false;
+	}
+	
+	public void createScoreHBox() {
+		HBox scoreHBox = new HBox();
+		scoreText = new Text("0");
+		scoreText.setFont(new Font("Arial Black", 30));
+		scoreText.setFill(Color.DARKMAGENTA);
+		try {
+			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("score.png").toURI().toString()));
+			scoreHBox.getChildren().addAll(scoreTitle, scoreText);
+			mainPane.getChildren().add(scoreHBox);
+			AnchorPane.setLeftAnchor(scoreHBox, 50.0);
+			AnchorPane.setBottomAnchor(scoreHBox, 17.0);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void changeScore(double score) {
+		scoreText.setText(String.valueOf(score));
+	}
+	
+	public void createLivesHBox() {
+		HBox livesHBox = new HBox();
+		livesImageList = new ImageView[3];
+		try {
+			Image chibiImage = new Image(getClass().getResource("chibi.png").toURI().toString());
+			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("lives.png").toURI().toString()));
+			for(int i =0; i<livesImageList.length; i++) {
+				livesImageList[i] = new ImageView(chibiImage);
+				HBox.setMargin(livesImageList[i],	new Insets(5, 4, 0, 0));
+			}
+			livesHBox.getChildren().add(scoreTitle);
+			livesHBox.getChildren().addAll(livesImageList);
+			mainPane.getChildren().add(livesHBox);
+			AnchorPane.setRightAnchor(livesHBox, 50.0);
+			AnchorPane.setBottomAnchor(livesHBox, 17.0);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -129,7 +190,7 @@ public class Main extends Application{
 					ev->{
 						audioPlayer.playSelect();
 						startTitle.setVisible(false);
-						endingTitleTransition();
+						leavingTitleTransition();
 						new Thread(new Runnable() {
 							@Override
 							public void run() {
@@ -198,7 +259,7 @@ public class Main extends Application{
 		startTransition.play();
 	}
 	
-	public void endingTitleTransition() {
+	public void leavingTitleTransition() {
 		TranslateTransition hellTransition = new TranslateTransition();
 		hellTransition.setNode(hellTitle);
 		hellTransition.setByX(1000);
@@ -211,6 +272,15 @@ public class Main extends Application{
 		girlTransition.play();
 	}
 	
+	public void removeLife() {
+		int lives = player.getLives();
+		if(lives>=0) {
+			livesImageList[lives].setVisible(false);	
+		}
+		else {
+			audioPlayer.stopMusic();
+		}
+	}
 	
 	/*
 	 * Create our inputs to move the Player 
@@ -296,7 +366,13 @@ public class Main extends Application{
 							audioPlayer.playDeath();
 							player.addInvincibility();
 							player.loseLife();
+							removeLife();
 							removeAllBullets();
+							if(player.isDead()) {
+								gameOver = true;
+								audioPlayer.stopMusic();
+								this.stop();
+							}
 							break;
 						}	
 					}
@@ -312,6 +388,7 @@ public class Main extends Application{
 					gameField.getChildren().addAll(newBullets);
 					newBullets.clear();
 					prevTime = now;
+					changeScore(++score);
 				}
 				
 			}
