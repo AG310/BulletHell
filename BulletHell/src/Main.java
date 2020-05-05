@@ -4,8 +4,6 @@ import java.util.LinkedList;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -131,7 +129,7 @@ public class Main extends Application{
 		scoreText.setFont(new Font("Arial Black", 30));
 		scoreText.setFill(Color.DARKMAGENTA);
 		try {
-			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("score.png").toURI().toString()));
+			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("images/score.png").toURI().toString()));
 			scoreHBox.getChildren().addAll(scoreTitle, scoreText);
 			mainPane.getChildren().add(scoreHBox);
 			AnchorPane.setLeftAnchor(scoreHBox, 50.0);
@@ -149,8 +147,8 @@ public class Main extends Application{
 		HBox livesHBox = new HBox();
 		livesImageList = new ImageView[3];
 		try {
-			Image chibiImage = new Image(getClass().getResource("chibi.png").toURI().toString());
-			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("lives.png").toURI().toString()));
+			Image chibiImage = new Image(getClass().getResource("images/chibi.png").toURI().toString());
+			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("images/lives.png").toURI().toString()));
 			for(int i =0; i<livesImageList.length; i++) {
 				livesImageList[i] = new ImageView(chibiImage);
 				HBox.setMargin(livesImageList[i],	new Insets(5, 4, 0, 0));
@@ -169,10 +167,10 @@ public class Main extends Application{
 	public void createTitles()
 	{
 		try {
-			hellTitle = new ImageView(new Image(getClass().getResource("hellTitle.png").toURI().toString()));
-			girlTitle = new ImageView(new Image(getClass().getResource("girlTitle.png").toURI().toString()));
-			startTitle = new ImageView(new Image(getClass().getResource("startGlow.png").toURI().toString())); 
-			gameOverTitle = new ImageView(new Image(getClass().getResource("gameOver.png").toURI().toString()));
+			hellTitle = new ImageView(new Image(getClass().getResource("images/hellTitle.png").toURI().toString()));
+			girlTitle = new ImageView(new Image(getClass().getResource("images/girlTitle.png").toURI().toString()));
+			startTitle = new ImageView(new Image(getClass().getResource("images/startGlow.png").toURI().toString())); 
+			gameOverTitle = new ImageView(new Image(getClass().getResource("images/gameOver.png").toURI().toString()));
 			mainPane.getChildren().addAll(hellTitle, girlTitle, startTitle, gameOverTitle);
 			AnchorPane.setTopAnchor(hellTitle, 90.0);
 			AnchorPane.setLeftAnchor(hellTitle, -950.0);

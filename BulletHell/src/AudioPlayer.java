@@ -8,11 +8,11 @@ public class AudioPlayer {
 	private AudioClip select;
 	
 	public AudioPlayer() {
-		cursorHover = new AudioClip(getClass().getResource("cursorHover.wav").toString());
-		gameMusic = new AudioClip(getClass().getResource("gameMusic.wav").toString());
-		wind = new AudioClip(getClass().getResource("wind.wav").toString());
-		death = new AudioClip(getClass().getResource("death.wav").toString());
-		select = new AudioClip(getClass().getResource("select.wav").toString());
+		cursorHover = new AudioClip(getClass().getResource("sounds/cursorHover.wav").toString());
+		gameMusic = new AudioClip(getClass().getResource("sounds/gameMusic.wav").toString());
+		wind = new AudioClip(getClass().getResource("sounds/wind.wav").toString());
+		death = new AudioClip(getClass().getResource("sounds/death.wav").toString());
+		select = new AudioClip(getClass().getResource("sounds/select.wav").toString());
 		cursorHover.setRate(2);
 		death.setRate(2);
 	}

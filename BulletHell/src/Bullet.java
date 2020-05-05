@@ -61,25 +61,25 @@ public class Bullet extends Pane {
 	public void randomGenerateSprite() {
 		double randomNumber = Math.random()*100;
 		if(randomNumber < 14) {
-			createImageView("blueBullet.png");
+			createImageView("images/blueBullet.png");
 		}
 		else if(randomNumber < 28) {
-			createImageView("cyanBullet.png");
+			createImageView("images/cyanBullet.png");
 		}
 		else if(randomNumber < 42) {
-			createImageView("greenBullet.png");
+			createImageView("images/greenBullet.png");
 		}
 		else if(randomNumber < 56) {
-			createImageView("orangeBullet.png");
+			createImageView("images/orangeBullet.png");
 		}
 		else if(randomNumber < 70) {
-			createImageView("redBullet.png");
+			createImageView("images/redBullet.png");
 		}
 		else if(randomNumber < 84) {
-			createImageView("yellowBullet.png");
+			createImageView("images/yellowBullet.png");
 		}
 		else if(randomNumber < 98) {
-			createImageView("whiteBullet.png");
+			createImageView("images/whiteBullet.png");
 		}
 		
 	}

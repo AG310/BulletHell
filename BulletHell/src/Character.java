@@ -33,9 +33,9 @@ public class Character extends Pane{
 		gamePaneWidth = gamePane.getPrefWidth();
 		gamePaneHeight = gamePane.getPrefHeight();
 		try {
-			spriteStraightImage = new Image(getClass().getResource("straightFlight.png").toURI().toString());
-			spriteLeftImage = new Image(getClass().getResource("leftFlight.png").toURI().toString());
-			spriteRightImage = new Image(getClass().getResource("rightFlight.png").toURI().toString());
+			spriteStraightImage = new Image(getClass().getResource("images/straightFlight.png").toURI().toString());
+			spriteLeftImage = new Image(getClass().getResource("images/leftFlight.png").toURI().toString());
+			spriteRightImage = new Image(getClass().getResource("images/rightFlight.png").toURI().toString());
 			spriteImageView = new ImageView(spriteStraightImage);
 			this.getChildren().add(spriteImageView);
 		} catch (URISyntaxException e) {
