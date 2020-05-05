@@ -295,9 +295,6 @@ public class Main extends Application{
 		if(lives>=0) {
 			livesImageList[lives].setVisible(false);	
 		}
-		else {
-			audioPlayer.stopMusic();
-		}
 	}
 	
 	/*
@@ -388,7 +385,6 @@ public class Main extends Application{
 							removeAllBullets();
 							if(player.isDead()) {
 								gameOver = true;
-								audioPlayer.stopMusic();
 								this.stop();
 							}
 							break;

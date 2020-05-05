@@ -53,6 +53,9 @@ public class AudioPlayer {
 	}
 	
 	public void playGameOver() {
+		if(gameMusic.isPlaying()) {
+			gameMusic.stop();
+		}
 		gameMusic.setCycleCount(AudioClip.INDEFINITE);
 		gameMusic.setRate(0.5);
 		gameMusic.play();
