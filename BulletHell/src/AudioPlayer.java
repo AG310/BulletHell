@@ -53,7 +53,7 @@ public class AudioPlayer {
 	}
 	
 	public void playGameOver() {
-		gameMusic.setCycleCount(1);
+		gameMusic.setCycleCount(AudioClip.INDEFINITE);
 		gameMusic.setRate(0.5);
 		gameMusic.play();
 	}

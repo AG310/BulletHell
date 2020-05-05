@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -40,6 +42,7 @@ public class Main extends Application{
 	private ImageView hellTitle; 
 	private ImageView girlTitle;
 	private ImageView startTitle;
+	private ImageView gameOverTitle;
 	private AudioPlayer audioPlayer;
 	private Text scoreText;
 	private int score;
@@ -68,6 +71,7 @@ public class Main extends Application{
 				}}
 				
 				audioPlayer.playGameOver();
+				gameOverTransition();
 			}
 		}).start();
 		
@@ -137,7 +141,7 @@ public class Main extends Application{
 		}
 	}
 	
-	public void changeScore(double score) {
+	public void changeScore(int score) {
 		scoreText.setText(String.valueOf(score));
 	}
 	
@@ -168,13 +172,16 @@ public class Main extends Application{
 			hellTitle = new ImageView(new Image(getClass().getResource("hellTitle.png").toURI().toString()));
 			girlTitle = new ImageView(new Image(getClass().getResource("girlTitle.png").toURI().toString()));
 			startTitle = new ImageView(new Image(getClass().getResource("startGlow.png").toURI().toString())); 
-			mainPane.getChildren().addAll(hellTitle, girlTitle, startTitle);
+			gameOverTitle = new ImageView(new Image(getClass().getResource("gameOver.png").toURI().toString()));
+			mainPane.getChildren().addAll(hellTitle, girlTitle, startTitle, gameOverTitle);
 			AnchorPane.setTopAnchor(hellTitle, 90.0);
 			AnchorPane.setLeftAnchor(hellTitle, -950.0);
 			AnchorPane.setTopAnchor(girlTitle, 180.0);
 			AnchorPane.setLeftAnchor(girlTitle, 1245.0);
 			AnchorPane.setTopAnchor(startTitle, 350.0);
 			AnchorPane.setLeftAnchor(startTitle, 110.0);
+			AnchorPane.setTopAnchor(gameOverTitle, -50.0);
+			AnchorPane.setLeftAnchor(gameOverTitle, 70.0);
 			
 			startTitle.setOnMouseEntered(ev ->
 			{
@@ -270,6 +277,19 @@ public class Main extends Application{
 		girlTransition.setDuration(Duration.seconds(0.5));
 		hellTransition.play();
 		girlTransition.play();
+	}
+	
+	public void gameOverTransition() {
+		TranslateTransition gameOverTransition0 = new TranslateTransition(Duration.seconds(0.7), gameOverTitle);
+		gameOverTransition0.setByY(220);
+		TranslateTransition gameOverTransition1 = new TranslateTransition(Duration.seconds(0.2), gameOverTitle);
+		gameOverTransition1.setByY(-20);
+		TranslateTransition gameOverTransition2 = new TranslateTransition(Duration.seconds(0.4), gameOverTitle);
+		gameOverTransition2.setByY(20);
+		
+		SequentialTransition gameOverSequenTransition = new SequentialTransition();
+		gameOverSequenTransition.getChildren().addAll(gameOverTransition0,gameOverTransition1, gameOverTransition2);
+		gameOverSequenTransition.play();
 	}
 	
 	public void removeLife() {
