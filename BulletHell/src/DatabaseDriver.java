@@ -11,7 +11,7 @@ public class DatabaseDriver {
 	
 	public DatabaseDriver() {
 		try {
-			connection = DriverManager.getConnection("jdbc:sqlite::resource:database/scoredb.sqlite");
+			connection = DriverManager.getConnection("jdbc:sqlite::resource:database/scoresdb.sqlite");
 		} catch (SQLException e) {
 			System.out.println("Connection to database failed");
 			connection = null;
