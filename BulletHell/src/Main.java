@@ -7,6 +7,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -32,6 +33,7 @@ public class Main extends Application{
 	 */
 	private AnchorPane mainPane;
 	private Pane gameField;
+	private HBox[] topScoreHBoxes;
 	private Character player;
 	LinkedList<Bullet> bulletList;
 	private Scene scene;
@@ -52,28 +54,27 @@ public class Main extends Application{
 	@Override
 	public void start(Stage stage){
 		initialize(stage);
+		databaseDriver.deleteAllScores();
 		createGameInputs();
 		createGameLoop();
 		createScoreHBox();
 		createLivesHBox();
 		createTitles();
 		startingTitleTransition();	
+		//Play wind for menu screen
 		audioPlayer.playWind();
 		//Create Thread to monitor if player is still alive to continue
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				//TODO put label score keeping in loop
 				while(!gameOver) {try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}}
-				
-				gameOverTransition();
 				audioPlayer.playGameOver();
 				databaseDriver.addScore(score);
-				databaseDriver.printScores();
+				createTopScoresPane();
 			}
 		}).start();
 		
@@ -130,6 +131,9 @@ public class Main extends Application{
 		databaseDriver = new DatabaseDriver();
 	}
 	
+	/*
+	 * Create HBox Pane to house Score Image and Value
+	 */
 	public void createScoreHBox() {
 		HBox scoreHBox = new HBox();
 		scoreText = new Text("0");
@@ -138,6 +142,7 @@ public class Main extends Application{
 		try {
 			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("images/score.png").toURI().toString()));
 			scoreHBox.getChildren().addAll(scoreTitle, scoreText);
+	
 			mainPane.getChildren().add(scoreHBox);
 			AnchorPane.setLeftAnchor(scoreHBox, 50.0);
 			AnchorPane.setBottomAnchor(scoreHBox, 17.0);
@@ -146,16 +151,69 @@ public class Main extends Application{
 		}
 	}
 	
+	public void createTopScoresPane(){
+		//Create our Text for our actual scores and style them
+		int [] topScores = databaseDriver.getTopScores();
+		Text[] topScoreTexts = new Text[3];
+		for(int i =0; i<3; i++) {
+			topScoreTexts[i] = new Text(String.valueOf(topScores[i]));
+			topScoreTexts[i].setFont(new Font("Arial Black", 20));
+			topScoreTexts[i].setFill(Color.HOTPINK);
+		}
+		
+		//Create our Image and Image Views that will follow the score text
+		//We will put both these components in a HBox to group them
+		topScoreHBoxes = new HBox[3];
+		try {
+			Image roundsImage = new Image(getClass().getResource("images/rounds.png").toURI().toString());
+			
+			//Create a Thread to make UI Changes and Start Game Over Sequence
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					for(int i = 0; i<3; i++) {
+						//Add ImageView to our Top Score Hboxes and Put them in place
+						ImageView currImageView = new ImageView(roundsImage);
+						topScoreHBoxes[i] = new HBox(topScoreTexts[i], currImageView);
+						HBox.setMargin(currImageView, new Insets(5, 0, 0, 5));
+						topScoreHBoxes[i].setOpacity(0);
+						mainPane.getChildren().add(topScoreHBoxes[i]);
+						AnchorPane.setTopAnchor(topScoreHBoxes[i], 255+ i*40.0);
+						AnchorPane.setLeftAnchor(topScoreHBoxes[i], 185.0);
+					}
+					//Start Game Over Transition
+					gameOverTransition();
+					
+				}
+			});
+			
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	/*
+	 * Change Player Score value on screen
+	 */
 	public void changeScore(int score) {
 		scoreText.setText(String.valueOf(score));
 	}
 	
+	/*
+	 * Create HBox Pane for displaying number of lives left
+	 */
 	public void createLivesHBox() {
 		HBox livesHBox = new HBox();
+		//Create List of Lives Images to Place in our HBox
 		livesImageList = new ImageView[3];
 		try {
 			Image chibiImage = new Image(getClass().getResource("images/chibi.png").toURI().toString());
 			ImageView scoreTitle = new ImageView(new Image(getClass().getResource("images/lives.png").toURI().toString()));
+			//Create 3 of the same ImageView for each life
 			for(int i =0; i<livesImageList.length; i++) {
 				livesImageList[i] = new ImageView(chibiImage);
 				HBox.setMargin(livesImageList[i],	new Insets(5, 4, 0, 0));
@@ -171,6 +229,10 @@ public class Main extends Application{
 	}
 	
 	
+	/*
+	 * Create all of our ImageView Titles and Place them in our Main window
+	 * This Function takes care of positioning, opacities, and Event Handlers.
+	 */
 	public void createTitles()
 	{
 		try {
@@ -193,7 +255,9 @@ public class Main extends Application{
 			AnchorPane.setLeftAnchor(topScoresTitle, 112.0);
 			
 
-			
+			/*
+			 * Glow Start Title when hovered over
+			 */
 			startTitle.setOnMouseEntered(ev ->
 			{
 				startTitle.setEffect(new Glow(0.9));
@@ -204,6 +268,10 @@ public class Main extends Application{
 				startTitle.setEffect(null);
 			});
 			
+			/*
+			 * When Start Game clicked play selected sounds, Start a Thread to make UI changes
+			 * Make Audio Changes, and Start Game Loop
+			 */
 			startTitle.addEventHandler(MouseEvent.MOUSE_CLICKED, 
 					ev->{
 						audioPlayer.playSelect();
@@ -277,6 +345,9 @@ public class Main extends Application{
 		startTransition.play();
 	}
 	
+	/*
+	 * Create Transition for when game starting
+	 */
 	public void leavingTitleTransition() {
 		TranslateTransition hellTransition = new TranslateTransition();
 		hellTransition.setNode(hellTitle);
@@ -290,7 +361,11 @@ public class Main extends Application{
 		girlTransition.play();
 	}
 	
+	/*
+	 * Create Transtitions for when the game has ended
+	 */
 	public void gameOverTransition() {
+		//GameOverTransitions - Game Over Title Descent
 		TranslateTransition gameOverTransition0 = new TranslateTransition(Duration.seconds(0.9), gameOverTitle);
 		gameOverTransition0.setByY(220);
 		TranslateTransition gameOverTransition1 = new TranslateTransition(Duration.seconds(0.2), gameOverTitle);
@@ -298,21 +373,34 @@ public class Main extends Application{
 		TranslateTransition gameOverTransition2 = new TranslateTransition(Duration.seconds(0.4), gameOverTitle);
 		gameOverTransition2.setByY(20);
 		
+		//TopScoreTransitions - Fade in of Top 3 Score Title
 		FadeTransition topScoreTransition0 = new FadeTransition(Duration.seconds(0.7), topScoresTitle);
 		topScoreTransition0.setByValue(1);
-		
 		FadeTransition topScoreTransition1 = new FadeTransition(Duration.seconds(0.5), topScoresTitle);
 		topScoreTransition1.setByValue(1);
 		topScoreTransition1.setCycleCount(2);
 		topScoreTransition1.setAutoReverse(true);
 		topScoreTransition1.setToValue(0);
 		
+		//ScoresSequentialTransition- Fade in each score one at a time
+		SequentialTransition scoresSequentialTransition = new SequentialTransition();
+		for(int i = 0; i<topScoreHBoxes.length; i++) {
+			FadeTransition scoreBoardFadeIn = new FadeTransition(Duration.seconds(0.7), topScoreHBoxes[i]);
+			scoreBoardFadeIn.setByValue(1);
+			scoreBoardFadeIn.setCycleCount(1);
+			scoresSequentialTransition.getChildren().add(scoreBoardFadeIn);
+		}
+		
+		//Set Sequence of Above Transitions
 		SequentialTransition gameOverSequenTransition = new SequentialTransition();
 		gameOverSequenTransition.getChildren().addAll(gameOverTransition0,gameOverTransition1, gameOverTransition2,
-				topScoreTransition0, topScoreTransition1);
+				topScoreTransition0, topScoreTransition1, scoresSequentialTransition);
 		gameOverSequenTransition.play();
 	}
 	
+	/*
+	 * Remove Life Image from Screen
+	 */
 	public void removeLife() {
 		int lives = player.getLives();
 		if(lives>=0) {
@@ -362,7 +450,9 @@ public class Main extends Application{
 				});
 	}
 	
-	//Remove all bullets from field if player hit or game over
+	/*
+	 * Remove all bullets from field if player hit or game over
+	 */
 	public void removeAllBullets() {
 		gameField.getChildren().removeAll(bulletList);
 		bulletList.clear();
