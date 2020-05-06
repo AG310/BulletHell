@@ -29,18 +29,22 @@ public class DatabaseDriver {
 		return true;
 	}
 	
-	public void printScores() {
+	public int[] getTopScores() {
+		int[] scoreList = {0,0,0};
         Statement statement;
 		try {
 			statement = connection.createStatement();
-	        ResultSet rs = statement.executeQuery("SELECT * FROM scores ORDER BY score DESC");
+	        ResultSet rs = statement.executeQuery("SELECT * FROM scores ORDER BY score DESC LIMIT 3");
+	        int i = 0;
 	        while(rs.next())
 	         {
-	           System.out.println(rs.getInt("score"));
+	           scoreList[i]=rs.getInt("score");
+	           i++;
 	         }
 		} catch (SQLException e) {
 			System.out.println("Scores could not be printed.");
 		}
+		return scoreList;
 	}
 	
 	public void addScore(int newScore) {
@@ -51,6 +55,16 @@ public class DatabaseDriver {
 	        statement.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("Scores could not be added.");
+		}
+	}
+	
+	public void deleteAllScores() {
+        Statement statement;
+		try {
+			statement = connection.createStatement();
+	        statement.executeUpdate("DELETE FROM scores");
+		} catch (SQLException e) {
+			System.out.println("Scores could not be printed.");
 		}
 	}
 }
